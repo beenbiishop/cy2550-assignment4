@@ -2,7 +2,6 @@
 import argparse
 import math
 import random
-import string
 
 HELP_TEXT = """usage: xkcdpwgen [-h] [-w WORDS] [-c CAPS] [-n NUMBERS] [-s SYMBOLS]
                 
@@ -29,15 +28,15 @@ def load_word_list(word_list_path: str) -> list:
         return f.read().splitlines()
 
 
-# Represents the password generator
+# Represents a password generator. Generates passwords using the XKCD method.
 class PasswordGenerator:
     def __init__(self, word_list_path: str):
-        self.WORD_LIST = load_word_list(word_list_path)
-        self.SYMBOL_LIST = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '.', ':', ';']
-        self.NUM_LIST = [str(i) for i in range(10)]
-        self.WORDS: [str] = []
-        self.SYMBOLS: [str] = []
-        self.NUMBERS: [str] = []
+        self.__WORD_LIST = load_word_list(word_list_path)
+        self.__SYMBOL_LIST = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '.', ':', ';']
+        self.__NUM_LIST = [str(i) for i in range(10)]
+        self.__WORDS: list[str] = []
+        self.__SYMBOLS: list[str] = []
+        self.__NUMBERS: list[str] = []
 
     # Generate the list of random words
     def __pick_words(self, num_words: int) -> None:
@@ -45,17 +44,17 @@ class PasswordGenerator:
         if num_words < 1:
             return
         # If the number of words is greater than the number of words in the word list, repeat the word list
-        if num_words > len(self.WORD_LIST):
-            num_iterations = math.floor(num_words / len(self.WORD_LIST))
+        if num_words > len(self.__WORD_LIST):
+            num_iterations = math.floor(num_words / len(self.__WORD_LIST))
             for i in range(num_iterations):
-                self.WORDS += self.WORD_LIST
-                random.shuffle(self.WORDS)
-            self.WORDS += random.sample(self.WORD_LIST, num_words % len(self.WORD_LIST))
+                self.__WORDS += self.__WORD_LIST
+                random.shuffle(self.__WORDS)
+            self.__WORDS += random.sample(self.__WORD_LIST, num_words % len(self.__WORD_LIST))
         # Else pick a random sample of words from the word list
         else:
-            self.WORDS = random.sample(self.WORD_LIST, num_words)
+            self.__WORDS = random.sample(self.__WORD_LIST, num_words)
         # Shuffle the list of words
-        random.shuffle(self.WORDS)
+        random.shuffle(self.__WORDS)
 
     # Generate the list of random symbols
     def __pick_symbols(self, num_symbols: int) -> None:
@@ -63,17 +62,17 @@ class PasswordGenerator:
         if num_symbols < 1:
             return
         # If the number of symbols is greater than the number of symbols in the symbol list, repeat the symbol list
-        if num_symbols > len(self.SYMBOL_LIST):
-            num_iterations = math.floor(num_symbols / len(self.SYMBOL_LIST))
+        if num_symbols > len(self.__SYMBOL_LIST):
+            num_iterations = math.floor(num_symbols / len(self.__SYMBOL_LIST))
             for i in range(num_iterations):
-                self.SYMBOLS += self.SYMBOL_LIST
-                random.shuffle(self.SYMBOLS)
-            self.SYMBOLS += random.sample(self.SYMBOL_LIST, num_symbols % len(self.SYMBOL_LIST))
+                self.__SYMBOLS += self.__SYMBOL_LIST
+                random.shuffle(self.__SYMBOLS)
+            self.__SYMBOLS += random.sample(self.__SYMBOL_LIST, num_symbols % len(self.__SYMBOL_LIST))
         # Else pick a random sample of symbols from the symbol list
         else:
-            self.SYMBOLS = random.sample(self.SYMBOL_LIST, num_symbols)
+            self.__SYMBOLS = random.sample(self.__SYMBOL_LIST, num_symbols)
         # Shuffle the list of symbols
-        random.shuffle(self.SYMBOLS)
+        random.shuffle(self.__SYMBOLS)
 
     # Generate a list of random numbers
     def __pick_numbers(self, num_digits: int) -> None:
@@ -81,27 +80,27 @@ class PasswordGenerator:
         if num_digits < 1:
             return
         # If the number of digits is greater than the number of digits in the number list, repeat the number list
-        if num_digits > len(self.NUM_LIST):
-            num_iterations = math.floor(num_digits / len(self.NUM_LIST))
+        if num_digits > len(self.__NUM_LIST):
+            num_iterations = math.floor(num_digits / len(self.__NUM_LIST))
             for i in range(num_iterations):
-                self.NUMBERS += self.NUM_LIST
-                random.shuffle(self.NUMBERS)
-            self.NUMBERS += random.sample(self.NUM_LIST, num_digits % len(self.NUM_LIST))
+                self.__NUMBERS += self.__NUM_LIST
+                random.shuffle(self.__NUMBERS)
+            self.__NUMBERS += random.sample(self.__NUM_LIST, num_digits % len(self.__NUM_LIST))
         # Else pick a random sample of numbers from the number list
         else:
-            self.NUMBERS = random.sample(self.NUM_LIST, num_digits)
+            self.__NUMBERS = random.sample(self.__NUM_LIST, num_digits)
         # Shuffle the list of numbers
-        random.shuffle(self.NUMBERS)
+        random.shuffle(self.__NUMBERS)
 
     # Capitalize a random sample of words in the chosen word list
     def __capitalize_words(self, num_words: int) -> None:
         # If the number of words to capitalize is less than 1, return
         if num_words < 1:
             return
-        for i in range(min(num_words, len(self.WORDS))):
-            self.WORDS[i] = self.WORDS[i].capitalize()
+        for i in range(min(num_words, len(self.__WORDS))):
+            self.__WORDS[i] = self.__WORDS[i].capitalize()
 
-    # Generate a password
+    # Generate a password using provided parameters
     def generate_password(self, num_words: int = 4, num_caps: int = 0, num_symbols: int = 0,
                           num_digits: int = 0) -> str:
         # Generate the lists of words, symbols, and numbers based on the parameters
@@ -111,7 +110,7 @@ class PasswordGenerator:
         self.__pick_numbers(num_digits)
 
         # Combine the lists into a single list
-        password_list = self.WORDS + self.SYMBOLS + self.NUMBERS
+        password_list = self.__WORDS + self.__SYMBOLS + self.__NUMBERS
 
         # Shuffle the list
         random.shuffle(password_list)
