@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import math
 import random
 import string
 
@@ -32,7 +33,7 @@ def load_word_list(word_list_path: str) -> list:
 class PasswordGenerator:
     def __init__(self, word_list_path: str):
         self.WORD_LIST = load_word_list(word_list_path)
-        self.SYMBOL_LIST = string.punctuation
+        self.SYMBOL_LIST = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '.', ':', ';']
         self.NUM_LIST = [str(i) for i in range(10)]
         self.WORDS: [str] = []
         self.SYMBOLS: [str] = []
@@ -43,8 +44,17 @@ class PasswordGenerator:
         # If the number of words is less than 1, return
         if num_words < 1:
             return
-        # Pick a random sample of words from the word list and shuffle it
-        self.WORDS = random.sample(self.WORD_LIST, num_words)
+        # If the number of words is greater than the number of words in the word list, repeat the word list
+        if num_words > len(self.WORD_LIST):
+            num_iterations = math.floor(num_words / len(self.WORD_LIST))
+            for i in range(num_iterations):
+                self.WORDS += self.WORD_LIST
+                random.shuffle(self.WORDS)
+            self.WORDS += random.sample(self.WORD_LIST, num_words % len(self.WORD_LIST))
+        # Else pick a random sample of words from the word list
+        else:
+            self.WORDS = random.sample(self.WORD_LIST, num_words)
+        # Shuffle the list of words
         random.shuffle(self.WORDS)
 
     # Generate the list of random symbols
@@ -52,8 +62,17 @@ class PasswordGenerator:
         # If the number of symbols is less than 1, return
         if num_symbols < 1:
             return
-        # Pick a random sample of symbols from the symbol list and shuffle it
-        self.SYMBOLS = random.sample(self.SYMBOL_LIST, num_symbols)
+        # If the number of symbols is greater than the number of symbols in the symbol list, repeat the symbol list
+        if num_symbols > len(self.SYMBOL_LIST):
+            num_iterations = math.floor(num_symbols / len(self.SYMBOL_LIST))
+            for i in range(num_iterations):
+                self.SYMBOLS += self.SYMBOL_LIST
+                random.shuffle(self.SYMBOLS)
+            self.SYMBOLS += random.sample(self.SYMBOL_LIST, num_symbols % len(self.SYMBOL_LIST))
+        # Else pick a random sample of symbols from the symbol list
+        else:
+            self.SYMBOLS = random.sample(self.SYMBOL_LIST, num_symbols)
+        # Shuffle the list of symbols
         random.shuffle(self.SYMBOLS)
 
     # Generate a list of random numbers
@@ -61,8 +80,17 @@ class PasswordGenerator:
         # If the number of digits is less than 1, return
         if num_digits < 1:
             return
-        # Pick a random sample of numbers from the number list and shuffle it
-        self.NUMBERS = random.sample(self.NUM_LIST, num_digits)
+        # If the number of digits is greater than the number of digits in the number list, repeat the number list
+        if num_digits > len(self.NUM_LIST):
+            num_iterations = math.floor(num_digits / len(self.NUM_LIST))
+            for i in range(num_iterations):
+                self.NUMBERS += self.NUM_LIST
+                random.shuffle(self.NUMBERS)
+            self.NUMBERS += random.sample(self.NUM_LIST, num_digits % len(self.NUM_LIST))
+        # Else pick a random sample of numbers from the number list
+        else:
+            self.NUMBERS = random.sample(self.NUM_LIST, num_digits)
+        # Shuffle the list of numbers
         random.shuffle(self.NUMBERS)
 
     # Capitalize a random sample of words in the chosen word list
